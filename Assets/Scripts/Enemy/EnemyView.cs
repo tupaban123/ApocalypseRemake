@@ -15,8 +15,8 @@ namespace Apocalypse.Enemy
         private void Start()
         {
             _aiPath = GetComponent<AIPath>();
-            Debug.Log($"Player: {_player != null}");
 
+            _enemyModel = new EnemyModel(this, _aiPath);
         }
 
         /*private void Update()
