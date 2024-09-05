@@ -17,6 +17,9 @@ namespace Apocalypse.Player
         private PlayerModel _playerModel;
         private PlayerConfig _playerConfig;
 
+        private Transform _transform;
+        public Transform Transform => _transform;
+
         public Action<Vector2, Vector2> OnJoysticksInput;
 
         public Action DashStartCallback => OnDashStart;
@@ -27,6 +30,7 @@ namespace Apocalypse.Player
         [Inject]
         private void Construct(IInputSystem inputSystem, PlayerConfig playerConfig)
         {
+            _transform = transform;
             _inputSystem = inputSystem;
             _playerConfig = playerConfig;
         }
@@ -73,7 +77,7 @@ namespace Apocalypse.Player
 
         public void RotatePlayer(Quaternion targetRotation)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, _playerConfig.RotateSpeed * Time.deltaTime);
+            Transform.rotation = Quaternion.Lerp(Transform.rotation, targetRotation, _playerConfig.RotateSpeed * Time.deltaTime);
         }
     }
 }
