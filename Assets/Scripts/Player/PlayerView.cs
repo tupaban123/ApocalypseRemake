@@ -1,5 +1,6 @@
 using Apocalypse.CodeBase;
 using Apocalypse.Configs.Player;
+using Apocalypse.Entity;
 using Apocalypse.InputSystem;
 using System;
 using UnityEngine;
@@ -7,7 +8,7 @@ using Zenject;
 
 namespace Apocalypse.Player
 {
-    public class PlayerView : MonoBehaviour, ICoroutineRunner
+    public class PlayerView : MonoBehaviour, ICoroutineRunner, IDamageable
     {
         [SerializeField] private Rigidbody _playerRb;
         [SerializeField] private TrailRenderer _dashTrailRenderer;
@@ -26,6 +27,8 @@ namespace Apocalypse.Player
         public Action DashEndCallback => OnDashEnd;
 
         public float MoveJoystickDistanceFromCenter => Vector3.Distance(Vector3.zero, _inputSystem.MoveAxis);
+
+        public EntityType EntityType => EntityType.Player;
 
         [Inject]
         private void Construct(IInputSystem inputSystem, PlayerConfig playerConfig)
@@ -64,20 +67,9 @@ namespace Apocalypse.Player
 
         private void OnDashEnd() => _dashTrailRenderer.enabled = false;
 
-        public void MovePlayer(Vector3 direction, bool isDash = false)
+        public void Damage(float damage)
         {
-            float speed = isDash ?
-                _playerConfig.Speed * _playerConfig.DashSpeedMultiplier :
-                _playerConfig.Speed;
-            
-            Vector3 velocity = direction * speed; 
-
-            _playerRb.linearVelocity = new Vector3(velocity.x, _playerRb.linearVelocity.y, velocity.z); 
-        }
-
-        public void RotatePlayer(Quaternion targetRotation)
-        {
-            Transform.rotation = Quaternion.Lerp(Transform.rotation, targetRotation, _playerConfig.RotateSpeed * Time.deltaTime);
+            _playerModel.Damage(damage);
         }
     }
 }

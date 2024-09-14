@@ -10,7 +10,7 @@ namespace Apocalypse.Player.Movement
     { 
         private PlayerView _playerView;
         private Rigidbody _playerRb;
-        private PlayerConfig _playerConfig;
+        private PlayerMovementConfig _movementConfig;
 
         private Transform _transform;
 
@@ -22,10 +22,10 @@ namespace Apocalypse.Player.Movement
         private Action OnStartDash;
         private Action OnEndDash;
 
-        public PlayerMovement(PlayerView playerView, PlayerConfig playerConfig, Rigidbody playerRb)
+        public PlayerMovement(PlayerView playerView, PlayerMovementConfig cfg, Rigidbody playerRb)
         { 
             _playerView = playerView;
-            _playerConfig = playerConfig;
+            _movementConfig = cfg;
             _playerRb = playerRb;
 
             _transform = playerRb.transform;
@@ -67,8 +67,8 @@ namespace Apocalypse.Player.Movement
         private void MovePlayer(Vector3 moveDirection)
         {
             float speed = _isDashing ?
-            _playerConfig.Speed * _playerConfig.DashSpeedMultiplier :
-            _playerConfig.Speed;
+            _movementConfig.Speed * _movementConfig.DashSpeedMultiplier :
+            _movementConfig.Speed;
 
             Vector3 velocity = moveDirection * speed;
 
@@ -79,7 +79,7 @@ namespace Apocalypse.Player.Movement
         {
             Quaternion rotateTarget = Quaternion.LookRotation(lookRotation);
 
-            _transform.rotation = Quaternion.Lerp(_transform.rotation, rotateTarget, _playerConfig.RotateSpeed * Time.deltaTime);
+            _transform.rotation = Quaternion.Lerp(_transform.rotation, rotateTarget, _movementConfig.RotateSpeed * Time.deltaTime);
         }
 
         private IEnumerator Dash()
@@ -110,7 +110,7 @@ namespace Apocalypse.Player.Movement
 
             MovePlayer(currentMoveDirection);
 
-            yield return new WaitForSeconds(_playerConfig.DashDuration);
+            yield return new WaitForSeconds(_movementConfig.DashDuration);
 
             _isDashing = false;
             OnEndDash?.Invoke();
@@ -123,12 +123,12 @@ namespace Apocalypse.Player.Movement
             _canDash = false;
             _isDashing = false;
 
-            yield return new WaitForSeconds(_playerConfig.DashCooldown);
+            yield return new WaitForSeconds(_movementConfig.DashCooldown);
             
             _canDash = true;
         }
 
-        public void DoubleClickCallback()
+        public void StartDash()
         {
             if (_canDash)
                 _coroutineRunner.StartCoroutine(Dash());

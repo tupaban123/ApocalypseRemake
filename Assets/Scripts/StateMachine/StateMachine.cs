@@ -18,7 +18,10 @@ namespace Apocalypse.StatesMachine
         public void AddState(State state)
         {
             if (!_states.ContainsKey(state.GetType()))
+            {
                 _states.Add(state.GetType(), state);
+                Debug.Log($"state {state.GetType()} added");
+            }
             else
                 Debug.LogWarning($"State {state.GetType()} already added!");
         }
@@ -38,7 +41,7 @@ namespace Apocalypse.StatesMachine
         {
             Type stateType = typeof(T);
 
-            if (CurrentState.GetType() == stateType)
+            if (CurrentState?.GetType() == stateType)
                 return;
 
             if(_states.TryGetValue(stateType, out State newState))

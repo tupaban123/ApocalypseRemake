@@ -1,9 +1,23 @@
+using System;
 using UnityEngine;
 
 namespace Apocalypse.Configs.Player
 {
     [CreateAssetMenu(fileName = "PlayerConfig", menuName = "Configs/PlayerConfig")]
     public class PlayerConfig : ScriptableObject
+    {
+        [field: SerializeField] public PlayerHealthConfig HealthConfig;
+        [field: SerializeField] public PlayerMovementConfig MovementConfig;
+    }
+
+    [Serializable]
+    public class PlayerHealthConfig
+    {
+        [field: SerializeField] public float MaxHP { get; private set; }
+    }
+
+    [Serializable] 
+    public class PlayerMovementConfig
     {
         [Header("Movement")]
         [field: SerializeField] public float Speed { get; private set; } = 5f;
